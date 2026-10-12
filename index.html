@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gynaecology tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3F5F4;
+    --paper: #FFFFFF;
+    --ink: #13292E;
+    --muted: #55676B;
+    --line: #D9E0DE;
+    --teal: #0F5C63;
+    --saffron: #E3A72F;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1A1C; --paper: #172629; --ink: #E6EEEC; --muted: #9FB2B1; --line: #2A3B3E; --teal: #6FC3C9; --saffron: #F0BE57;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 400 17px/1.5 "Atkinson Hyperlegible", system-ui, sans-serif;
+  }
+  main { max-width: 60rem; margin: 0 auto; padding: 3rem 1rem 4rem; }
+
+  header { border-left: 6px solid var(--saffron); padding-left: 1.1rem; margin-bottom: 2.75rem; }
+  h1 { font-size: clamp(2rem, 6vw, 2.9rem); line-height: 1.05; margin: 0 0 .5rem; color: var(--teal); letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); max-width: 40rem; }
+
+  section { margin-bottom: 2.25rem; }
+  h2 { font-size: 1.15rem; margin: 0 0 .9rem; color: var(--ink); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr)); gap: .8rem; }
+
+  a.tool {
+    display: flex; flex-direction: column; gap: .3rem;
+    background: var(--paper); color: inherit; text-decoration: none;
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 1rem 1.1rem 1.05rem; min-height: 6.5rem;
+    transition: border-color .15s, transform .15s;
+  }
+  a.tool strong { font-size: 1.12rem; color: var(--teal); }
+  a.tool span { color: var(--muted); font-size: .95rem; }
+  a.tool:hover { border-color: var(--teal); transform: translateY(-2px); }
+  a.tool:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 1.25rem; color: var(--muted); font-size: .92rem; }
+  footer p { margin: .25rem 0; max-width: 44rem; }
+
+  @media (prefers-reduced-motion: reduce) { a.tool { transition: none; } a.tool:hover { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Gynaecology tools</h1>
+    <p>Documentation and decision aids for gynaecology clinics and theatre, built by Matthew Denham.</p>
+  </header>
+
+  <section aria-labelledby="g-clinic">
+    <h2 id="g-clinic">Clinic notes</h2>
+    <div class="grid">
+      <a class="tool" href="oph.html"><strong>Outpatient hysteroscopy</strong><span>OPH clinic notes</span></a>
+      <a class="tool" href="ftc.html"><strong>Fast track clinic</strong><span>Urgent suspected cancer clinic notes</span></a>
+      <a class="tool" href="benign.html"><strong>General gynaecology</strong><span>Benign gynaecology clinic notes</span></a>
+      <a class="tool" href="antenatal.html"><strong>Antenatal clinic</strong><span>Antenatal clinic notes</span></a>
+    </div>
+  </section>
+
+  <section aria-labelledby="g-letters">
+    <h2 id="g-letters">Letters and theatre</h2>
+    <div class="grid">
+      <a class="tool" href="results.html"><strong>Results letters</strong><span>Letters giving results</span></a>
+      <a class="tool" href="opnote.html"><strong>Operation note builder</strong><span>Structured operation notes</span></a>
+    </div>
+  </section>
+
+  <section aria-labelledby="g-decide">
+    <h2 id="g-decide">Decision support</h2>
+    <div class="grid">
+      <a class="tool" href="usc-triage.html"><strong>Bleeding on HRT triage</strong><span>Urgent referral triage using BMS 2024 risk factors, with downgrade letters</span></a>
+      <a class="tool" href="hormones.html"><strong>Hormone profile analyser</strong><span>Interpreting hormone profiles, with a guide</span></a>
+      <a class="tool" href="cocp.html"><strong>Combined pill selection</strong><span>Choosing a combined pill by indication</span></a>
+    </div>
+  </section>
+
+  <footer>
+    <p>Personal tools for use by the author. Not a Trust-approved system.</p>
+    <p>Check all output before it goes into the clinical record.</p>
+  </footer>
+</main>
+</body>
+</html>
