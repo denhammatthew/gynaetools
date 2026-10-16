@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>General Gynae Clinic</title>
+<style>
+:root{
+  --bg:#f4f5f7; --card:#fff; --ink:#1f2933; --muted:#64748b; --line:#e2e8f0;
+  --accent:#0f766e; --accent-soft:#ccfbf1; --chip:#f1f5f9; --chip-ink:#334155;
+  --warn:#b45309;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:var(--accent)}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+header h1{font-size:17px;margin:0}
+header a{font-size:13px;text-decoration:none}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:16px;max-width:1280px;margin:0 auto;padding:16px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.divider{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border-bottom:2px solid var(--accent-soft);padding-bottom:4px;margin:26px 0 14px}
+.divider:first-child{margin-top:0}
+.sec{margin-bottom:16px}
+.lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.sublbl{font-size:12px;color:var(--muted);margin:8px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--chip-ink);border-radius:999px;padding:6px 12px;font-size:13.5px;cursor:pointer;user-select:none;font-family:inherit}
+.chip:hover{border-color:#94a3b8}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.chosen{background:#134e4a;border-color:#134e4a;color:#fff;font-weight:600}
+.chip.chosen::before{content:"\2713  "}
+.key{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:0 0 10px}
+.key span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.key .k1::before{background:var(--accent)} .key .k2::before{background:#134e4a}
+.req{color:#b91c1c}
+.sub{margin:8px 0 4px 12px;padding-left:12px;border-left:3px solid var(--accent-soft)}
+input[type=text],input[type=date],textarea{font:inherit;border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:#fff;color:var(--ink);width:100%;max-width:520px}
+textarea{min-height:64px;resize:vertical;max-width:none}
+input.small{width:90px}
+.free{margin-top:8px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.stepper button{border:0;background:var(--chip);width:32px;height:30px;font-size:17px;cursor:pointer}
+.stepper span{min-width:28px;text-align:center;font-weight:600}
+.par{display:grid;grid-template-columns:150px auto;gap:8px 12px;align-items:center}
+.hint{font-size:12px;color:var(--muted)}
+.out{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto}
+@media (max-width:900px){.out{position:static;max-height:none}}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:6px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--accent)}
+.btn.clear{display:block;width:100%;margin-top:28px;background:#fff;color:var(--warn);border-color:var(--warn)}
+#report{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#000}
+#report table{border-collapse:collapse;width:100%}
+#report td{vertical-align:top;padding:2px 6px 2px 0}
+#report td.k{font-weight:bold;white-space:nowrap;width:1%;padding-right:12px}
+#report .h{font-weight:bold;text-decoration:underline;margin:12px 0 4px}
+#report .t{font-weight:bold;font-size:14px;margin-bottom:4px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1f2933;color:#fff;padding:8px 14px;border-radius:6px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.show{opacity:1}
+footer{max-width:1280px;margin:0 auto;padding:0 16px 24px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>General Gynaecology Clinic</h1>
+  <a href="index.html">← Back to all tools</a>
+</header>
+<div class="wrap">
+  <main class="card" id="form"></main>
+  <aside class="card out">
+    <div class="btns">
+      <button class="btn" id="copyRich">Copy report</button>
+      <button class="btn ghost" id="copyPlain">Copy as plain text</button>
+    </div>
+    <div id="report"></div>
+  </aside>
+</div>
+<footer>Personal tool for use by the author; not a Trust-approved system. Nothing you enter is saved or sent anywhere — it stays on this page and is cleared when you close or refresh it.</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* =========================================================
+   General (benign) gynaecology clinic documentation
+   Everything stays in this page's memory. No storage, no network.
+   ========================================================= */
+
+const AUTHOR = "Matthew Denham";
+
+/* ---------- option lists ---------- */
+const PC_OPTS = ["Pelvic pain","Heavy periods","Painful periods","Irregular cycles","Chronic pelvic pain","Ovarian cyst","Premenstrual tension / mood changes","Fertility concerns"];
+const PS_OPTS = ["0","1","2","3","4"];
+const SMEAR_OPTS = ["UTD HPV negative","UTD HPV positive","Due","Overdue","Not required"];
+const PMED_OPTS = ["Nil","Hypertension","Type 2 diabetes","Type 1 diabetes","Hypothyroidism","Asthma","COPD","Anxiety","Depression","Atrial fibrillation","Ischaemic heart disease","Hypercholesterolaemia","Previous DVT/PE","Breast cancer","Osteoporosis","Epilepsy","Migraine","IBD","IBS","Rheumatoid arthritis","CKD","PCOS","Endometriosis","Anaemia"];
+/* medications suggested when a condition is ticked in PMed */
+const MED_BY_COND = {
+  "Hypertension":["Amlodipine","Ramipril","Lisinopril","Losartan","Candesartan","Indapamide","Bendroflumethiazide","Doxazosin","Bisoprolol"],
+  "Type 2 diabetes":["Metformin","Gliclazide","Sitagliptin","Linagliptin","Dapagliflozin","Empagliflozin","Semaglutide","Tirzepatide","Insulin"],
+  "Type 1 diabetes":["Insulin glargine","Insulin aspart","Insulin pump"],
+  "Hypothyroidism":["Levothyroxine","Liothyronine"],
+  "Asthma":["Salbutamol inhaler","Beclometasone inhaler","Fostair","Symbicort","Seretide","Montelukast"],
+  "COPD":["Salbutamol inhaler","Tiotropium","Trimbow","Trelegy","Anoro"],
+  "Anxiety":["Sertraline","Citalopram","Escitalopram","Fluoxetine","Propranolol","Pregabalin"],
+  "Depression":["Sertraline","Citalopram","Fluoxetine","Mirtazapine","Venlafaxine","Duloxetine","Amitriptyline"],
+  "Atrial fibrillation":["Apixaban","Edoxaban","Rivaroxaban","Warfarin","Bisoprolol","Digoxin","Diltiazem"],
+  "Ischaemic heart disease":["Aspirin","Clopidogrel","Ticagrelor","Atorvastatin","Bisoprolol","Ramipril","GTN spray","Isosorbide mononitrate"],
+  "Hypercholesterolaemia":["Atorvastatin","Simvastatin","Rosuvastatin","Ezetimibe"],
+  "Previous DVT/PE":["Apixaban","Rivaroxaban","Edoxaban","Dabigatran","Warfarin","Enoxaparin"],
+  "Breast cancer":["Tamoxifen","Letrozole","Anastrozole","Exemestane","Zoladex"],
+  "Osteoporosis":["Alendronic acid","Risedronate","Adcal-D3","Denosumab"],
+  "Epilepsy":["Levetiracetam","Lamotrigine","Sodium valproate","Carbamazepine","Topiramate"],
+  "Migraine":["Sumatriptan","Rizatriptan","Propranolol","Amitriptyline","Topiramate"],
+  "IBD":["Mesalazine","Azathioprine","Infliximab","Adalimumab","Vedolizumab"],
+  "IBS":["Mebeverine","Peppermint oil","Loperamide","Amitriptyline"],
+  "Rheumatoid arthritis":["Methotrexate","Folic acid","Hydroxychloroquine","Sulfasalazine","Adalimumab","Prednisolone"],
+  "CKD":["Ramipril","Dapagliflozin","Alfacalcidol","Sodium bicarbonate"],
+  "PCOS":["Metformin","Inositol","Spironolactone"],
+  "Endometriosis":["Norethisterone","Desogestrel","Dienogest","GnRH analogue","Relugolix CT (Ryeqo)","Naproxen","Mefenamic acid"],
+  "Anaemia":["Ferrous sulphate","Ferrous fumarate","Folic acid","Vitamin B12 injections"],
+};
+const PREV_IMG = ["USS","MRI","CT","X-ray","PET-CT","Other"];
+const HORMONE_PROFILE_TEXT = "day 2–5 hormone profile (FSH, LH, oestradiol, testosterone, SHBG, TSH, T4, prolactin — PCOS bloods)";
+const MED_OPTS = ["Nil","Amlodipine","Ramipril","Losartan","Bisoprolol","Atorvastatin","Metformin","Levothyroxine","Sertraline","Citalopram","Omeprazole","Aspirin","Apixaban","Warfarin","Tamoxifen","Letrozole","Anastrozole"];
+const ALLERGY_OPTS = ["NKDA","Penicillin","Latex","Morphine","Codeine","NSAIDs","Chlorhexidine","Elastoplast/adhesive"];
+const PSURG = [
+  {n:"Nil"},
+  {n:"Appendicectomy",a:["Laparoscopic","Open"]},
+  {n:"Cholecystectomy",a:["Laparoscopic","Open"]},
+  {n:"Colectomy",a:["Laparoscopic","Open"]},
+  {n:"Hernia repair",a:["Laparoscopic","Open"]},
+  {n:"Diagnostic laparoscopy"},
+  {n:"Excision of endometriosis",a:["Laparoscopic","Open"]},
+  {n:"Ovarian cystectomy",a:["Laparoscopic","Open"]},
+  {n:"Myomectomy",a:["Laparoscopic","Open","Hysteroscopic"]},
+  {n:"Sterilisation",a:["Laparoscopic","Open"]},
+  {n:"Hysteroscopy"},
+  {n:"Endometrial ablation"},
+  {n:"LLETZ"},
+];
+const SMOKE_OPTS = ["Non smoker","Ex-smoker","Smoker"];
+const CHAPERONES = ["Sarah","Arliah","Michelle","Steph","Rachael"];
+
+/* menstrual */
+const LMP_STATUS = ["Currently bleeding","Unsure","Amenorrhoeic"];
+const CYCLE_PATTERN = ["Regular","Irregular"];
+const CYCLE_LEN = ["21","24","26","28","30","32","35","35–60","> 60"];
+const BLEED_DAYS = ["2","3","4","5","6","7","8","10","14","> 14"];
+const HEAVINESS = ["Light","Moderate","Heavy","Very heavy"];
+const PAD_CHANGE = ["Hourly","1–2 hourly","2–3 hourly","4+ hourly"];
+const MENS_FEATURES = ["Clots","Flooding","Double protection","Changes overnight","Time off work/school","Dysmenorrhoea","Dyspareunia","IMB","PCB"];
+
+/* hormones */
+const HORMONE_OPTS = ["Nil hormones","HRT","Contraception"];
+const HRT = [
+  {n:"Oestrogel",d:["1 pump","2 pumps","3 pumps","4 pumps"]},
+  {n:"Sandrena",d:["0.5mg","1mg","1.5mg","2mg"]},
+  {n:"Lenzetto",d:["1 spray","2 sprays","3 sprays"]},
+  {n:"Evorel patch",d:["25","50","75","100"]},
+  {n:"Estradot patch",d:["25","37.5","50","75","100"]},
+  {n:"Elleste Solo",d:["1mg","2mg"]},
+  {n:"Progynova",d:["1mg","2mg"]},
+  {n:"Utrogestan",d:["100mg continuous","200mg sequential"]},
+  {n:"Mirena (HRT progestogen)"},
+  {n:"Evorel Conti"},{n:"Evorel Sequi"},
+  {n:"FemSeven Conti"},{n:"FemSeven Sequi"},
+  {n:"Femoston",d:["1/10","2/10"]},
+  {n:"Femoston-conti",d:["0.5/2.5","1/5"]},
+  {n:"Elleste Duet",d:["1mg","2mg"]},
+  {n:"Elleste Duet Conti"},
+  {n:"Kliofem"},{n:"Kliovance"},{n:"Indivina"},{n:"Bijuve"},
+  {n:"Tibolone"},
+  {n:"Vaginal oestrogen",d:["Vagifem","Vagirux","Imvaggis","Ovestin cream","Estring"]},
+  {n:"Testosterone",d:["Testogel","Tostran","AndroFeme"]},
+];
+const CONTRA = [
+  {n:"COCP"},{n:"POP"},
+  {n:"Implant (Nexplanon)",dev:1},{n:"Depo-Provera",dev:0},{n:"Sayana Press",dev:0},
+  {n:"Mirena",dev:1},{n:"Levosert",dev:1},{n:"Benilexa",dev:1},{n:"Kyleena",dev:1},{n:"Jaydess",dev:1},
+  {n:"Copper IUD",dev:1},
+  {n:"Patch (Evra)"},{n:"Ring",},
+  {n:"Condoms"},{n:"Partner vasectomy"},{n:"Sterilised"},{n:"Natural methods"},
+];
+const COCP_PILLS = ["Rigevidon","Microgynon 30","Levest","Ovranette","Maexeni","Lizinna","Cilique","Gedarel 20/150","Gedarel 30/150","Femodette","Millinette 20/75","Millinette 30/75","Katya","Marvelon","Mercilon","Yasmin","Lucette","Eloine","Drovelis","Zoely","Qlaira","Loestrin 20","Loestrin 30","Co-cyprindiol (Dianette)"];
+const COCP_REGIMEN = ["Standard 21/7","Tailored","Continuous"];
+const POP_PILLS = ["Desogestrel","Cerazette","Cerelle","Hana","Lovima","Zelleta","Slynd","Noriday","Norgeston"];
+
+/* ultrasound */
+const USS_UT = ["Normal","Fibroids","Adenomyosis","Endometrial polyp","Not seen / no scan"];
+const USS_OV = ["Normal","No adnexal masses","Simple cyst","Endometrioma","Dermoid","Polycystic morphology"];
+
+/* examination */
+const EXAM_STATUS = ["Examined","Not examined","Declined"];
+const ABDO = ["Soft, non-tender","Tender","Palpable mass","Not examined"];
+const VULVA = ["Normal","Atrophic","Lesion","Prolapse"];
+const CERVIX = ["Normal","Ectropion","Polyp","Contact bleeding","Discharge","Not visualised"];
+const UT_SIZE = ["Normal size","Bulky","Enlarged"];
+const UT_MOB = ["Mobile","Fixed"];
+const UT_POS = ["Anteverted","Retroverted"];
+const UT_TENDER = ["Non-tender","Tender"];
+const ADNEXA = ["No adnexal masses","Adnexal tenderness","Adnexal mass","Cervical excitation","Nodularity in POD"];
+const PROC_TODAY = ["Cervical smear","Swabs (HVS/CT/GC)","Pipelle biopsy","Coil removed","Coil inserted"];
+
+/* discussion and plan */
+/* diagnoses and the management options offered for discussion under each */
+const ENDO_CONS = ["Analgesia (NSAIDs/paracetamol)","Pain diary","Pelvic health physiotherapy","Pain management support"];
+const ENDO_MED = ["COCP (tailored/continuous)","POP (desogestrel)","Mirena","Implant (Nexplanon)","Dienogest","GnRH analogue with add-back HRT","Relugolix CT (Ryeqo)","Yselty (linzagolix) — after previous treatment"];
+const DX = {
+  "Dysfunctional uterine bleeding":{
+    Conservative:["Iron supplementation"],
+    Medical:["Tranexamic acid","Mefenamic acid","COCP","POP","Mirena","Implant (Nexplanon)","Norethisterone","Depo-Provera"],
+    Surgical:["Endometrial ablation","Hysterectomy"]},
+  "Confirmed endometriosis":{
+    Conservative:ENDO_CONS, Medical:ENDO_MED,
+    Surgical:["Laparoscopic excision of endometriosis","Hysterectomy ± BSO","Referral to BSGE endometriosis centre"]},
+  "Possible endometriosis":{
+    Conservative:ENDO_CONS, Medical:ENDO_MED,
+    Surgical:["MRI pelvis","Diagnostic laparoscopy ± excision of endometriosis"]},
+  "PCOS":{
+    Conservative:["Weight loss and lifestyle advice","Diet and exercise"],
+    Medical:["COCP (cycle control/endometrial protection)","Cyclical progestogen (at least 4 bleeds a year)","Mirena","Metformin","Inositol","Spironolactone (hirsutism)","Eflornithine cream"],
+    Surgical:["Referral to fertility"]},
+  "Adenomyosis":{
+    Conservative:["Analgesia (NSAIDs/paracetamol)","Expectant","Iron supplementation"],
+    Medical:["Tranexamic acid","Mefenamic acid","Mirena","COCP","POP","Dienogest","GnRH analogue with add-back HRT","Relugolix CT (Ryeqo)"],
+    Surgical:["Uterine artery embolisation","Hysterectomy"]},
+  "Symptomatic fibroids":{
+    Conservative:["Expectant / monitoring","Iron supplementation"],
+    Medical:["Tranexamic acid","Mefenamic acid","Mirena (if cavity not distorted)","COCP","Relugolix CT (Ryeqo)","Yselty (linzagolix)","GnRH analogue (pre-operative)"],
+    Surgical:["Hysteroscopic resection","Laparoscopic myomectomy","Open myomectomy","Uterine artery embolisation","Endometrial ablation","Hysterectomy"]},
+  "Subfertility":{
+    Investigations:["Hormone profile","AMH"],
+    Surgical:["Laparoscopy and dye test"],
+    Referral:["GP to refer on to fertility unit if appropriate"]},
+  "PMT":{
+    Conservative:["Symptom diary for 2 cycles","Exercise and lifestyle","CBT"],
+    Medical:["COCP (drospirenone, continuous)","SSRI (continuous or luteal phase)","Transdermal oestradiol with progestogen","GnRH analogue with add-back HRT"],
+    Surgical:["Hysterectomy and BSO with HRT"]},
+};
+const DISCUSS = ["Likely diagnosis explained","Treatment options discussed","Risks and benefits discussed","Patient information leaflet given","Questions answered"];
+const PLAN_GROUPS = [
+  {k:"Bloods",o:["FBC","Ferritin","TFTs","Hormone profile","CA125","AMH","Coagulation screen"]},
+  {k:"Imaging",o:["USS pelvis","MRI pelvis"]},
+  {k:"Procedure",o:["Outpatient hysteroscopy","Hysteroscopy under GA","Diagnostic laparoscopy","Laparoscopic excision of endometriosis","Ovarian cystectomy","Endometrial ablation","Myomectomy","Hysterectomy"]},
+  {k:"Referral",o:["Fertility","Pain team","Endometriosis centre","Menopause clinic"]},
+];
+
+/* ---------- state ---------- */
+function freshState(){
+  return {
+    age:"",bmi:"",ps:"",pc:[],pcFree:"",hpc:"",
+    lmpDate:"",lmpStatus:"",cyclePattern:"",cycleLen:"",cycleRange:"",bleedDays:"",heaviness:"",padChange:"",mensFeatures:[],menarche:"",mensFree:"",
+    hormones:[],hrt:[],hrtDose:{},hrtFree:"",contra:[],cocpPill:"",cocpRegimen:"",popPill:"",devInserted:{},contraFree:"",
+    svd:0,cs:0,misc:0,miscMgmt:[],top:0,topTypes:[],ect:0,ectSide:[],ectMgmt:[],parityExtra:"",
+    smears:"",smearsFree:"",pmed:[],pmedFree:"",meds:[],medsFree:"",allergies:[],allergiesFree:"",
+    psurg:[],psurgApp:{},psurgFree:"",smoke:"",livesAlone:false,shFree:"",fh:[],fhFree:"",
+    prevImg:[],prevImgText:{},chapStatus:"",d21:false,
+    ussUt:[],ussUtFree:"",et:"",ussOv:[],ussOvFree:"",
+    exam:"",chaperone:"",chaperoneFree:"",abdo:[],abdoFree:"",vulva:[],cervix:[],utSize:"",utSizeWeeks:"",utMob:"",utPos:"",utTender:"",adnexa:[],examFree:"",procToday:[],procFree:"",
+    dx:[],dxFree:"",dxOpt:{},dxChosen:{},
+    discuss:[],discussFree:"",
+    plan:{},fu:"",fuAuto:false,fuSuppress:"",fuMonths:"",fuMode:"",planFree:""
+  };
+}
+let S = freshState();
+
+/* ---------- tiny DOM helpers ---------- */
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (k==="class") el.className=v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2),v);
+    else el.setAttribute(k,v);
+  }
+  for (const c of kids.flat()){ if (c==null||c===false) continue; el.append(c.nodeType?c:document.createTextNode(c)); }
+  return el;
+}
+const chipRefreshers = [];
+const conditionals = [];
+const inputs = [];
+
+/* get/set by path like "hrtDose.Oestrogel" */
+function getP(p){ return p.split(".").reduce((o,k)=>o==null?undefined:o[k], S); }
+function setP(p,v){ const ks=p.split("."); let o=S; for(let i=0;i<ks.length-1;i++){ if(o[ks[i]]==null)o[ks[i]]={}; o=o[ks[i]]; } o[ks[ks.length-1]]=v; }
+
+/* chip group: multi=array state; single=string state (tap again to clear) */
+function chips(path, opts, {multi=false, excl=[], onChange}={}){
+  const box = h("div",{class:"chips"});
+  for (const o of opts){
+    const b = h("button",{class:"chip",type:"button"},o);
+    b.addEventListener("click",()=>{
+      let cur = getP(path);
+      if (multi){
+        cur = Array.isArray(cur)?[...cur]:[];
+        if (cur.includes(o)) cur = cur.filter(x=>x!==o);
+        else if (excl.includes(o)) cur=[o];
+        else { cur = cur.filter(x=>!excl.includes(x)); cur.push(o); }
+      } else cur = cur===o ? "" : o;
+      setP(path,cur);
+      if (onChange) onChange(o);
+      update();
+    });
+    chipRefreshers.push(()=>{ const cur=getP(path); b.classList.toggle("on", multi ? (Array.isArray(cur)&&cur.includes(o)) : cur===o); });
+    box.append(b);
+  }
+  return box;
+}
+function toggleChip(path,label){
+  const b = h("button",{class:"chip",type:"button"},label);
+  b.addEventListener("click",()=>{ setP(path,!getP(path)); update(); });
+  chipRefreshers.push(()=>b.classList.toggle("on",!!getP(path)));
+  return b;
+}
+function text(path, placeholder, cls){
+  const el = h("input",{type:"text",placeholder:placeholder||"",class:(cls||"")});
+  el.addEventListener("input",()=>{ setP(path,el.value); renderReport(); });
+  inputs.push(()=>{ const v=getP(path)||""; if (el.value!==v) el.value=v; });
+  return el;
+}
+function area(path, placeholder){
+  const el = h("textarea",{placeholder:placeholder||""});
+  el.addEventListener("input",()=>{ setP(path,el.value); renderReport(); });
+  inputs.push(()=>{ const v=getP(path)||""; if (el.value!==v) el.value=v; });
+  return el;
+}
+function stepper(path){
+  const n = h("span",null,"0");
+  const el = h("span",{class:"stepper"},
+    h("button",{type:"button",onclick:()=>{ setP(path,Math.max(0,(getP(path)||0)-1)); update(); }},"−"),
+    n,
+    h("button",{type:"button",onclick:()=>{ setP(path,(getP(path)||0)+1); update(); }},"+"));
+  chipRefreshers.push(()=>{ n.textContent=getP(path)||0; });
+  return el;
+}
+function when(fn, ...kids){
+  const el = h("div",{class:"sub"},...kids);
+  conditionals.push(()=>{ el.style.display = fn()?"":"none"; });
+  return el;
+}
+function sec(label, ...kids){ return h("div",{class:"sec"}, h("div",{class:"lbl"},label), ...kids); }
+function divider(t){ return h("div",{class:"divider"},t); }
+function free(el){ el.classList.add("free"); return el; }
+
+/* discussed (1 tap) -> chosen (2nd tap) -> off (3rd tap) */
+function triChips(dx, gname, opts){
+  const box = h("div",{class:"chips"});
+  const disc = ()=>((S.dxOpt[dx]=S.dxOpt[dx]||{})[gname]=S.dxOpt[dx][gname]||[]);
+  const cho  = ()=>((S.dxChosen[dx]=S.dxChosen[dx]||{})[gname]=S.dxChosen[dx][gname]||[]);
+  for (const o of opts){
+    const b = h("button",{class:"chip",type:"button"},o);
+    b.addEventListener("click",()=>{
+      const d=disc(), c=cho();
+      if (c.includes(o)){ c.splice(c.indexOf(o),1); d.splice(d.indexOf(o),1); }
+      else if (d.includes(o)) c.push(o);
+      else d.push(o);
+      update();
+    });
+    chipRefreshers.push(()=>{ const d=((S.dxOpt[dx]||{})[gname])||[], c=((S.dxChosen[dx]||{})[gname])||[];
+      b.classList.toggle("on", d.includes(o)&&!c.includes(o)); b.classList.toggle("chosen", c.includes(o)); });
+    box.append(b);
+  }
+  return box;
+}
+/* what the plan implies for follow-up: surgery and/or onward referral */
+const NOT_SURGERY = ["MRI pelvis","Uterine artery embolisation","Referral to BSGE endometriosis centre","Referral to fertility"];
+const IS_REFERRAL = ["Referral to BSGE endometriosis centre","Referral to fertility","GP to refer on to fertility unit if appropriate"];
+function chosenAll(){ const out=[]; for (const dx of S.dx){ const c=S.dxChosen[dx]||{}; for (const gn of Object.keys(c)) for (const o of c[gn]) out.push([gn,o]); } return out; }
+function surgeryList(){
+  const a=[...(S.plan.Procedure||[])];
+  for (const [gn,o] of chosenAll()) if (gn==="Surgical" && !NOT_SURGERY.includes(o) && !a.includes(o)) a.push(o);
+  return a;
+}
+function referralList(){
+  const a=[...(S.plan.Referral||[])];
+  for (const [gn,o] of chosenAll()) if (IS_REFERRAL.includes(o) && !a.includes(o)) a.push(o);
+  return a;
+}
+function fuSig(){ return referralList().join("|")+"#"+surgeryList().join("|"); }
+function autoFu(){
+  if (S.fu && !S.fuAuto) return;            // a follow-up you chose yourself is never overwritten
+  if (!S.fu && S.fuSuppress){ if (S.fuSuppress===fuSig()) return; S.fuSuppress=""; }  // you cleared it: stay cleared until the plan changes
+  const target = referralList().length ? "Onward referral" : surgeryList().length ? "Referred for surgery" : "";
+  S.fu = target; S.fuAuto = !!target;
+}
+
+/* ---------- build form ---------- */
+function buildForm(){
+  const f = document.getElementById("form");
+  f.append(
+    divider("Patient"),
+    h("div",{class:"row sec"},
+      h("div",null,h("div",{class:"lbl"},"Age"),text("age","e.g. 34","small")),
+      h("div",null,h("div",{class:"lbl"},"BMI"),text("bmi","e.g. 26","small"))),
+    sec("Performance score", chips("ps",PS_OPTS)),
+
+    divider("History"),
+    sec("Presenting complaint", chips("pc",PC_OPTS,{multi:true}), free(text("pcFree","Other presenting complaint…"))),
+    sec("HPC", area("hpc","History of presenting complaint…")),
+
+    sec("Periods",
+      h("div",{class:"sublbl"},"LMP"),
+      h("div",{class:"row"},(()=>{ const d=h("input",{type:"date",style:"max-width:180px"});
+          d.addEventListener("input",()=>{ S.lmpDate=d.value; if(d.value) S.lmpStatus=""; update(); });
+          inputs.push(()=>{ if(d.value!==S.lmpDate) d.value=S.lmpDate; }); return d; })(),
+        h("button",{class:"chip",type:"button",onclick:()=>{ S.lmpDate=isoToday(); S.lmpStatus=""; update(); }},"Today"),
+        chips("lmpStatus",LMP_STATUS,{onChange:()=>{ if(S.lmpStatus) S.lmpDate=""; }})),
+      h("div",{class:"sublbl"},"Cycle"),
+      chips("cyclePattern",CYCLE_PATTERN),
+      h("div",{class:"sublbl"},"Cycle length (days)"),
+      chips("cycleLen",CYCLE_LEN),
+      free(text("cycleRange","Or range, e.g. 21–45")),
+      h("div",{class:"sublbl"},"Bleeds for (days)"),
+      chips("bleedDays",BLEED_DAYS),
+      h("div",{class:"sublbl"},"Heaviness"),
+      chips("heaviness",HEAVINESS),
+      h("div",{class:"sublbl"},"Pad/tampon changes on heaviest days"),
+      chips("padChange",PAD_CHANGE),
+      h("div",{class:"sublbl"},"Associated"),
+      chips("mensFeatures",MENS_FEATURES,{multi:true}),
+      h("div",{class:"row",style:"margin-top:8px"},h("span",{class:"hint"},"Menarche age"),text("menarche","","small")),
+      free(text("mensFree","Other menstrual details…"))),
+
+    sec("Hormones",
+      chips("hormones",HORMONE_OPTS,{multi:true,excl:["Nil hormones"]}),
+      when(()=>S.hormones.includes("HRT"),
+        h("div",{class:"sublbl"},"HRT"),
+        chips("hrt",HRT.map(x=>x.n),{multi:true}),
+        ...HRT.filter(x=>x.d).map(x=>when(()=>S.hrt.includes(x.n),
+          h("div",{class:"sublbl"},x.n), chips("hrtDose."+x.n, x.d))),
+        free(text("hrtFree","Other HRT / details…"))),
+      when(()=>S.hormones.includes("Contraception"),
+        h("div",{class:"sublbl"},"Contraception"),
+        chips("contra",CONTRA.map(x=>x.n),{multi:true}),
+        when(()=>S.contra.includes("COCP"),
+          h("div",{class:"sublbl"},"COCP"), chips("cocpPill",COCP_PILLS),
+          h("div",{class:"sublbl"},"Regimen"), chips("cocpRegimen",COCP_REGIMEN)),
+        when(()=>S.contra.includes("POP"),
+          h("div",{class:"sublbl"},"POP"), chips("popPill",POP_PILLS)),
+        ...CONTRA.filter(x=>x.dev).map(x=>when(()=>S.contra.includes(x.n),
+          h("div",{class:"row"},h("span",{class:"hint"},x.n+" inserted"), text("devInserted."+x.n,"e.g. 2023","small")))),
+        free(text("contraFree","Other contraception / details…")))),
+
+    sec("Parity",
+      h("div",{class:"par"},
+        h("span",null,"Vaginal births"),stepper("svd"),
+        h("span",null,"Caesarean sections"),stepper("cs"),
+        h("span",null,"Miscarriages"),stepper("misc"),
+        h("span",null,"Terminations"),stepper("top"),
+        h("span",null,"Ectopics"),stepper("ect")),
+      when(()=>S.misc>0, h("div",{class:"sublbl"},"Miscarriage management"), chips("miscMgmt",["Conservative","Medical","SMM"],{multi:true})),
+      when(()=>S.top>0, h("div",{class:"sublbl"},"Termination type"), chips("topTypes",["MTOP","STOP"],{multi:true})),
+      when(()=>S.ect>0, h("div",{class:"sublbl"},"Ectopic side"), chips("ectSide",["Left","Right"],{multi:true}),
+        h("div",{class:"sublbl"},"Ectopic management"), chips("ectMgmt",["Laparoscopic salpingectomy","Conservative","Methotrexate","Salpingotomy"],{multi:true})),
+      free(text("parityExtra","Other (e.g. forceps delivery)…"))),
+
+    sec("Smears", chips("smears",SMEAR_OPTS), free(text("smearsFree","Details (e.g. last smear date)…"))),
+    sec("PMed", chips("pmed",PMED_OPTS,{multi:true,excl:["Nil"]}), free(text("pmedFree","Past medical history…"))),
+    sec("Meds",
+      ...Object.entries(MED_BY_COND).map(([cond,list])=>when(()=>S.pmed.includes(cond),
+        h("div",{class:"sublbl"},"For "+(/^[A-Z]{2}/.test(cond)?cond:lc(cond))), chips("meds",list,{multi:true,excl:["Nil"]}))),
+      h("div",{class:"sublbl"},"Common medications"),
+      chips("meds",MED_OPTS.filter(m=>m==="Nil"||!Object.values(MED_BY_COND).flat().includes(m)),{multi:true,excl:["Nil"]}), free(text("medsFree","Medications…"))),
+    sec("Allergies", chips("allergies",ALLERGY_OPTS,{multi:true,excl:["NKDA"]}), free(text("allergiesFree","Allergies…"))),
+    sec("PSurg",
+      chips("psurg",PSURG.map(x=>x.n),{multi:true,excl:["Nil"]}),
+      ...PSURG.filter(x=>x.a).map(x=>when(()=>S.psurg.includes(x.n),
+        h("div",{class:"sublbl"},x.n), chips("psurgApp."+x.n, x.a))),
+      free(text("psurgFree","Previous surgery…"))),
+    sec("SH", h("div",{class:"row"}, chips("smoke",SMOKE_OPTS), toggleChip("livesAlone","Lives alone")), free(text("shFree","Other social history…"))),
+    sec("FH", chips("fh",["Nil"],{multi:true}), free(text("fhFree","Family history…"))),
+
+    divider("Previous imaging"),
+    sec("Previous imaging",
+      chips("prevImg",PREV_IMG,{multi:true}),
+      ...PREV_IMG.map(m=>when(()=>S.prevImg.includes(m),
+        h("div",{class:"sublbl"},m+(m==="Other"?" imaging":"")+" findings"),
+        area("prevImgText."+m, m==="Other" ? "Type of imaging, date and findings…" : "Date and findings…")))),
+
+    divider("Ultrasound"),
+    sec("Uterus", chips("ussUt",USS_UT,{multi:true,excl:["Normal","Not seen / no scan"]}), free(text("ussUtFree","e.g. fibroid size and position…"))),
+    sec("Endometrial thickness", h("div",{class:"row"}, text("et","e.g. 7","small"), h("span",{class:"hint"},"mm"))),
+    sec("Ovaries", chips("ussOv",USS_OV,{multi:true,excl:["Normal"]}), free(text("ussOvFree","e.g. cyst details…"))),
+
+    divider("Examination"),
+    sec("Examination", chips("exam",EXAM_STATUS)),
+    sec("Chaperone",
+      chips("chapStatus",["Chaperone present","Chaperone offered, declined"]),
+      when(()=>S.chapStatus==="Chaperone present",
+        chips("chaperone",CHAPERONES,{onChange:()=>{ S.chaperoneFree=""; }}),
+        free(text("chaperoneFree","Chaperone name…")))),
+    when(()=>S.exam==="Examined",
+      h("div",{class:"sublbl"},"Abdomen"), chips("abdo",ABDO,{multi:true,excl:["Not examined"]}), free(text("abdoFree","Abdominal findings…")),
+      h("div",{class:"sublbl"},"Vulva / vagina"), chips("vulva",VULVA,{multi:true,excl:["Normal"]}),
+      h("div",{class:"sublbl"},"Cervix"), chips("cervix",CERVIX,{multi:true,excl:["Normal"]}),
+      h("div",{class:"sublbl"},"Bimanual — uterus"),
+      h("div",{class:"row"}, chips("utSize",UT_SIZE)),
+      when(()=>S.utSize==="Enlarged", h("div",{class:"row"},text("utSizeWeeks","e.g. 14","small"),h("span",{class:"hint"},"week size"))),
+      h("div",{class:"row",style:"margin-top:6px"}, chips("utPos",UT_POS), chips("utMob",UT_MOB), chips("utTender",UT_TENDER)),
+      h("div",{class:"sublbl"},"Adnexa / POD"), chips("adnexa",ADNEXA,{multi:true}),
+      free(text("examFree","Other examination findings…"))),
+    sec("Procedures today", chips("procToday",PROC_TODAY,{multi:true}), free(text("procFree","Other procedure…"))),
+
+    divider("Diagnosis"),
+    sec("Diagnosis", chips("dx",Object.keys(DX),{multi:true}), free(text("dxFree","Other diagnosis…"))),
+
+    divider("Discussion"),
+    when(()=>S.dx.some(d=>DX[d]),
+      h("div",{class:"key"},h("span",{class:"k1"},"Tap once: discussed"),h("span",{class:"k2"},"Tap twice: chosen — goes into plan"),h("span",null,"Tap again to clear"))),
+    ...Object.entries(DX).map(([dx,groups])=>when(()=>S.dx.includes(dx),
+      h("div",{class:"lbl"},dx+" — options discussed"),
+      ...Object.entries(groups).map(([gname,opts])=>[
+        h("div",{class:"sublbl"},gname),
+        triChips(dx, gname, opts)]))),
+    sec("Discussion",chips("discuss",DISCUSS,{multi:true}), free(area("discussFree","What was discussed with the patient…"))),
+
+    divider("Plan"),
+    ...PLAN_GROUPS.map(g=>sec(g.k, chips("plan."+g.k, g.o, {multi:true}),
+      g.k==="Bloods" ? when(()=>(S.plan.Bloods||[]).includes("Hormone profile"),
+        h("div",{class:"hint"},"Adds: "+HORMONE_PROFILE_TEXT),
+        h("div",{class:"chips",style:"margin-top:6px"}, toggleChip("d21","Day 21 progesterone"))) : null)),
+    (()=>{ const el = sec("Follow-up",
+      chips("fu",["Discharge to GP","PIFU","Gynae clinic","Referred for surgery","Onward referral"],{onChange:()=>{ S.fuMonths=""; S.fuMode=""; S.fuSuppress = (!S.fu && S.fuAuto) ? fuSig() : ""; S.fuAuto=false; }}),
+      when(()=>S.fuAuto, h("div",{class:"hint"},"Filled in automatically from the plan — tap another option to change it.")),
+      when(()=>S.fu==="PIFU"||S.fu==="Gynae clinic",
+        h("div",{class:"row"}, chips("fuMonths",["6 weeks","3 months","6 months","12 months"]),
+          ...[when(()=>S.fu==="Gynae clinic", chips("fuMode",["Telephone","Face to face"]))])));
+      el.id="fuSec"; return el; })(),
+    sec("Additional plan", area("planFree","Any further plan…")),
+
+    h("button",{class:"btn clear",type:"button",id:"clearBtn",onclick:clearAll},"Clear entry — start next patient")
+  );
+}
+
+/* ---------- helpers for report ---------- */
+function isoToday(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function ukDate(iso){ const [y,m,d]=iso.split("-"); return d+"/"+m+"/"+y; }
+function daysSince(iso){ const [y,m,d]=iso.split("-").map(Number); const a=new Date(y,m-1,d); const t=new Date(); const b=new Date(t.getFullYear(),t.getMonth(),t.getDate()); return Math.round((b-a)/86400000); }
+function joinList(a){ return a.filter(Boolean).join(", "); }
+function withFree(arr, fr){ return joinList([...(arr||[]), (fr||"").trim()]); }
+function lc(s){ return s.charAt(0).toLowerCase()+s.slice(1); }
+function plural(n,s,p){ return n+" "+(n===1?s:(p||s+"s")); }
+
+function buildReport(){
+  const secs = []; // {title, rows:[[k,v]]}
+  const add = (title, rows)=>{ rows = rows.filter(r=>r && r[1]); if (rows.length) secs.push({title, rows}); };
+
+  /* demographics line */
+  const demo = [];
+  if (S.age.trim()) demo.push(S.age.trim()+" y.o");
+  if (S.bmi.trim()) demo.push("BMI "+S.bmi.trim());
+  if (S.ps) demo.push("Performance score "+S.ps);
+
+  /* history */
+  const hist = [];
+  hist.push(["PC", withFree(S.pc, S.pcFree)]);
+  hist.push(["HPC", S.hpc.trim()]);
+
+  /* periods */
+  const lmp = S.lmpDate ? (()=>{ const n=daysSince(S.lmpDate); return ukDate(S.lmpDate)+(n>=0?" (day "+(n+1)+")":""); })() : S.lmpStatus;
+  let cyc = "";
+  const len = S.cycleRange.trim() ? S.cycleRange.trim()+" days" : (S.cycleLen ? S.cycleLen+" days" : "");
+  if (S.cyclePattern || len) cyc = joinList([S.cyclePattern, len]);
+  let bleed = "";
+  const bp = [];
+  if (S.bleedDays) bp.push(S.bleedDays+" days");
+  if (S.heaviness) bp.push(lc(S.heaviness));
+  if (S.padChange) bp.push(lc(S.padChange)+" changes");
+  bleed = bp.join(", ");
+  const mensRows = [
+    ["LMP", lmp],
+    ["Cycle", cyc],
+    ["Bleeding", bleed],
+    ["Associated", joinList(S.mensFeatures)],
+    ["Menarche", S.menarche.trim() ? "age "+S.menarche.trim() : ""],
+    ["Periods – other", S.mensFree.trim()],
+  ];
+
+  /* hormones */
+  const horm = [];
+  if (S.hormones.includes("Nil hormones")) horm.push(["Hormones","Nil"]);
+  if (S.hormones.includes("HRT")){
+    const items = S.hrt.map(n=>{ const d=S.hrtDose[n]; if(!d) return n; if(n==="Vaginal oestrogen"||n==="Testosterone") return n+" ("+d+")"; return n+" "+d; });
+    horm.push(["HRT", withFree(items, S.hrtFree) || "Yes"]);
+  }
+  if (S.hormones.includes("Contraception")){
+    const items = S.contra.map(n=>{
+      if (n==="COCP"){ const x=joinList([S.cocpPill, S.cocpRegimen && lc(S.cocpRegimen)+" regimen"]); return x?"COCP ("+x+")":"COCP"; }
+      if (n==="POP") return S.popPill ? "POP ("+S.popPill+")" : "POP";
+      const yr = (S.devInserted[n]||"").trim();
+      return yr ? n+" (inserted "+yr+")" : n;
+    });
+    horm.push(["Contraception", withFree(items, S.contraFree) || "Yes"]);
+  }
+
+  /* parity */
+  const g = S.svd+S.cs+S.misc+S.top+S.ect, p = S.svd+S.cs;
+  let parity = "";
+  if (g>0){
+    const bits = [];
+    if (S.svd) bits.push(plural(S.svd,"vaginal birth"));
+    if (S.cs) bits.push(plural(S.cs,"caesarean section"));
+    if (S.misc) bits.push(plural(S.misc,"miscarriage")+(S.miscMgmt.length?" ("+S.miscMgmt.join(", ")+")":""));
+    if (S.top) bits.push(plural(S.top,"termination")+(S.topTypes.length?" ("+S.topTypes.join(", ")+")":""));
+    if (S.ect){
+      const side = S.ectSide.length===2 ? "bilateral" : S.ectSide.length ? lc(S.ectSide[0]) : "";
+      const det = joinList([side, ...S.ectMgmt.map(lc)]);
+      bits.push(plural(S.ect,"ectopic pregnancy","ectopic pregnancies")+(det?" ("+det+")":""));
+    }
+    parity = "G"+g+" P"+p+" ("+bits.join(", ")+")";
+  }
+  if (S.parityExtra.trim()) parity = joinList([parity, S.parityExtra.trim()]);
+
+  /* surgery */
+  const surg = S.psurg.map(n=>{ const a=S.psurgApp[n]; return a ? lc(a)+" "+lc(n) : n; }).map(s=>s.charAt(0).toUpperCase()+s.slice(1));
+  const sh = joinList([S.smoke, S.livesAlone?"Lives alone":"", S.shFree.trim()]);
+
+  const histRows = [
+    ...hist, ...mensRows, ...horm,
+    ["Parity", parity],
+    ["Smears", withFree(S.smears?[S.smears]:[], S.smearsFree)],
+    ["PMed", withFree(S.pmed, S.pmedFree)],
+    ["Meds", withFree(S.meds, S.medsFree)],
+    ["Allergies", withFree(S.allergies, S.allergiesFree)],
+    ["PSurg", withFree(surg, S.psurgFree)],
+    ["SH", sh],
+    ["FH", withFree(S.fh, S.fhFree)],
+  ];
+  add("HISTORY", histRows);
+
+  /* previous imaging */
+  add("PREVIOUS IMAGING", S.prevImg.map(m=>[m==="Other"?"Other imaging":m, (S.prevImgText[m]||"").trim()]));
+
+  /* ultrasound */
+  add("ULTRASOUND", [
+    ["Uterus", withFree(S.ussUt, S.ussUtFree)],
+    ["ET", S.et.trim() ? S.et.trim().replace(/\s*mm$/i,"")+" mm" : ""],
+    ["Ovaries", withFree(S.ussOv, S.ussOvFree)],
+  ]);
+
+  /* examination */
+  const ex = [];
+  const ch = S.chaperoneFree.trim() || S.chaperone;
+  const chapLine = S.chapStatus==="Chaperone present" ? "Chaperone present"+(ch?" ("+ch+")":"")
+                 : S.chapStatus==="Chaperone offered, declined" ? "Chaperone offered, declined" : "";
+  if (S.exam==="Examined"){
+    ex.push(["Consent", joinList(["Verbal consent obtained", chapLine && lc(chapLine)])]);
+    ex.push(["Abdomen", withFree(S.abdo, S.abdoFree)]);
+    ex.push(["Vulva/vagina", joinList(S.vulva)]);
+    ex.push(["Cervix", joinList(S.cervix)]);
+    const size = S.utSize==="Enlarged" && S.utSizeWeeks.trim() ? "Enlarged ("+S.utSizeWeeks.trim()+" week size)" : S.utSize;
+    const ut = [size, S.utPos, S.utMob, S.utTender].filter(Boolean).map((s,i)=>i?lc(s):s).join(", ");
+    ex.push(["Uterus", ut]);
+    ex.push(["Adnexa", joinList(S.adnexa)]);
+    ex.push(["Other", S.examFree.trim()]);
+  } else {
+    if (S.exam) ex.push(["Examination", S.exam]);
+    if (chapLine) ex.push(["Chaperone", chapLine]);
+  }
+  ex.push(["Procedures", withFree(S.procToday, S.procFree)]);
+  add("EXAMINATION", ex);
+
+  /* discussion */
+  add("DIAGNOSIS", [["", withFree(S.dx, S.dxFree)]]);
+  const disc = [];
+  for (const dx of S.dx){
+    const parts = Object.keys(DX[dx]).map(gn=>{ const v=((S.dxOpt[dx]||{})[gn])||[]; return v.length ? lc(gn)+": "+v.map(x=>/^[A-Z]{2}|^Mirena|^Depo|^Yselty/.test(x)?x:lc(x)).join(", ") : ""; }).filter(Boolean);
+    if (parts.length) disc.push([dx, "Options discussed — "+parts.join("; ")]);
+  }
+  const dl =[...S.discuss.map(x=>x+"."), S.discussFree.trim()].filter(Boolean).join(" ");
+  if (dl) disc.push(["", dl]);
+  add("DISCUSSION", disc);
+
+  /* plan */
+  const pl = [];
+  const chosen = [];
+  for (const dx of S.dx){ const c=S.dxChosen[dx]||{}; for (const gn of Object.keys(DX[dx]||{})) for (const o of (c[gn]||[])) if(!chosen.includes(o)) chosen.push(o); }
+  if (chosen.length) pl.push(["Agreed", chosen.join(", ")]);
+  for (const gr of PLAN_GROUPS){
+    let v=S.plan[gr.k]; if (!v || !v.length) continue;
+    if (gr.k==="Bloods") v = v.map(x=>x==="Hormone profile" ? HORMONE_PROFILE_TEXT.charAt(0).toUpperCase()+HORMONE_PROFILE_TEXT.slice(1)+(S.d21?", day 21 progesterone":"") : x);
+    pl.push([gr.k, v.join(", ")]);
+  }
+  if (S.procToday.includes("Cervical smear")) pl.push(["Results","Write with smear result"]);
+  else if (S.procToday.includes("Pipelle biopsy")) pl.push(["Results","Write with results"]);
+  let fu = "";
+  if (S.fu==="Discharge to GP") fu = "Discharge to GP";
+  else if (S.fu==="PIFU") fu = "PIFU"+(S.fuMonths?" "+S.fuMonths:"");
+  else if (S.fu==="Referred for surgery"){ const l=surgeryList(); fu = "Referred for surgery"+(l.length?" ("+l.map(x=>/^[A-Z]{2}/.test(x)?x:lc(x)).join(", ")+")":""); }
+  else if (S.fu==="Onward referral"){ const l=referralList(); fu = "Onward referral"+(l.length?" ("+l.map(x=>/^[A-Z]{2}|^GP/.test(x)?x:lc(x)).join(", ")+")":""); }
+  else if (S.fu==="Gynae clinic") fu = "Gynae clinic"+(S.fuMonths?" in "+S.fuMonths:"")+(S.fuMode?" ("+lc(S.fuMode)+")":"");
+  pl.push(["Follow-up", fu]);
+  pl.push(["Other", S.planFree.trim()]);
+  add("PLAN", pl);
+
+  return {title:"Gynae Clinic: "+AUTHOR, demo:demo.join(", "), secs};
+}
+
+/* ---------- render ---------- */
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/\n/g,"<br>"); }
+function reportHTML(r){
+  let out = '<div class="t" style="font-weight:bold;font-size:14px;">'+esc(r.title)+'</div>';
+  if (r.demo) out += '<div>'+esc(r.demo)+'</div>';
+  for (const s of r.secs){
+    out += '<div class="h" style="font-weight:bold;text-decoration:underline;margin:12px 0 4px;">'+esc(s.title)+'</div>';
+    out += '<table style="border-collapse:collapse;">';
+    for (const [k,v] of s.rows){
+      if (k) out += '<tr><td class="k" style="font-weight:bold;vertical-align:top;padding:1px 14px 1px 0;white-space:nowrap;">'+esc(k)+'</td><td style="vertical-align:top;padding:1px 0;">'+esc(v)+'</td></tr>';
+      else out += '<tr><td colspan="2" style="vertical-align:top;padding:1px 0;">'+esc(v)+'</td></tr>';
+    }
+    out += '</table>';
+  }
+  return out;
+}
+function reportText(r){
+  const lines = [r.title];
+  if (r.demo) lines.push(r.demo);
+  for (const s of r.secs){
+    lines.push("", s.title);
+    for (const [k,v] of s.rows) lines.push(k ? k+": "+v : v);
+  }
+  return lines.join("\n");
+}
+function renderReport(){ document.getElementById("report").innerHTML = reportHTML(buildReport()); }
+function update(){
+  autoFu();
+  chipRefreshers.forEach(f=>f());
+  conditionals.forEach(f=>f());
+  inputs.forEach(f=>f());
+  renderReport();
+}
+let clearArmed=null;
+function clearAll(){
+  const btn=document.getElementById("clearBtn");
+  if (!clearArmed){
+    btn.textContent="Tap again to clear everything";
+    clearArmed=setTimeout(()=>{ clearArmed=null; btn.textContent="Clear entry — start next patient"; },4000);
+    return;
+  }
+  clearTimeout(clearArmed); clearArmed=null; btn.textContent="Clear entry — start next patient";
+  S = freshState(); update(); window.scrollTo({top:0,behavior:"smooth"}); toast("Cleared — ready for next patient");
+}
+
+/* ---------- copy ---------- */
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1600); }
+async function copyRich(){
+  const r = buildReport(); const html = reportHTML(r), txt = reportText(r);
+  try{
+    if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
+      await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([txt],{type:"text/plain"})})]);
+      return toast("Report copied");
+    }
+  }catch(e){}
+  const el = document.getElementById("report"); const range=document.createRange(); range.selectNodeContents(el);
+  const sel=getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  const ok = document.execCommand("copy"); sel.removeAllRanges();
+  toast(ok?"Report copied":"Copy failed — select the report and copy manually");
+}
+async function copyPlain(){
+  const txt = reportText(buildReport());
+  try{ await navigator.clipboard.writeText(txt); return toast("Plain text copied"); }catch(e){}
+  const ta=h("textarea",null); ta.value=txt; document.body.append(ta); ta.select();
+  const ok=document.execCommand("copy"); ta.remove(); toast(ok?"Plain text copied":"Copy failed");
+}
+
+buildForm();
+document.getElementById("copyRich").addEventListener("click",copyRich);
+document.getElementById("copyPlain").addEventListener("click",copyPlain);
+update();
+</script>
+</body>
+</html>
